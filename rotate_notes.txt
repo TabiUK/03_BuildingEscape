@@ -1,0 +1,3 @@
+rotating Yaw == moving z
+rotating Rowling == moving x
+rotationg pitching == moving y
