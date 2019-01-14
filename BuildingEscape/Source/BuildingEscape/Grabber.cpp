@@ -41,12 +41,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	FVector LineTraceEnd = out_Location + (out_Rotation.Vector() * Reach);
 
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation: %s"), 
-	//	*out_Location.ToString(),
-	//	*out_Rotation.ToString());
-
 	DrawDebugLine(
 		GetWorld(),
 		out_Location,
@@ -56,5 +50,20 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		0.0f,
 		0,
 		10.0f);
+
+	/// Line-trace out to reach distance
+	FHitResult Hit = {};
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT Hit,
+		OUT out_Location,
+		OUT LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParameters
+		);
+
+	UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *Hit.GetActor()->GetName());
+
 }
 
