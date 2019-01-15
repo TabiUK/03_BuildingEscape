@@ -1,5 +1,3 @@
-// Copyright Nicholas Panayis 2018
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -48,5 +46,12 @@ private:
 	// Setup (assumed) attached input component
 	void SetupInputComponent();
 
+	// return hit for first phsics body in reach
 	FHitResult GetFirstPhysicsBodyInReach() const;
+
+	// returns current start of reach line
+	FVector GetReachLineTraceEndStart() const;
+
+	// returns current end of reach line
+	FVector GetReachLineTraceEnd() const;
 };
