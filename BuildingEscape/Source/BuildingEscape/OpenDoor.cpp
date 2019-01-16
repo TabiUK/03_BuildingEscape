@@ -24,17 +24,32 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 	LastDoorOpenTime = 0.0;
 	Owner = GetOwner();
+	if (Owner == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Owner found"));
+		return;
+	}
 	ClosedAngle = Owner->GetActorRotation().Yaw;
+
+	if (PressurePlate == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No PressurePlate on object %s"), *Owner->GetName());
+	}
 	
 }
 
 void UOpenDoor::OpenDoor()
 {
-	Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	if (Owner == nullptr) return;
+
+	/// Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
+	OnOpenRequest.Broadcast();
 }
 
 void UOpenDoor::CloseDoor()
 {
+	if (Owner == nullptr) return;
+
 	Owner->SetActorRotation(FRotator(0.0f, ClosedAngle, 0.0f));
 }
 
@@ -63,6 +78,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 float UOpenDoor::GetTotalMassOfActorsOnPlate() const
 {
 	float TotalMass = 0.0f;
+	if (PressurePlate == nullptr) return TotalMass;
 
 	// Find all the overlapping actors
 	TArray<AActor*> OverlappingActors;

@@ -54,8 +54,9 @@ void UGrabber::SetupInputComponent()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (PhysicsHandle == nullptr) return;
 
-	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
+	if (PhysicsHandle->GrabbedComponent)
 	{
 		// move the object that we're holding
 		PhysicsHandle->SetTargetLocation(GetReachLineTraceEnd());
@@ -65,13 +66,15 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 void UGrabber::Grab()
 {
+	if (PhysicsHandle == nullptr) return;
+
 	// LINE TRACE and see if we reach any actor with phsics body collision channel set
 	auto HitResult = GetFirstPhysicsBodyInReach();
 	auto ComponentToGrab = HitResult.GetComponent(); // gets the mesh in our case
 	auto ActorHit = HitResult.GetActor();
 
 	// if we hit something then attach a physics handle
-	if (PhysicsHandle && ActorHit)
+	if (ActorHit)
 	{
 		/// use GrabComponentAtLocation to allow object to rotate freely
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
@@ -81,7 +84,6 @@ void UGrabber::Grab()
 			{ 0.0f, 0.0f, 0.0f }
 		);
 	}
-
 }
 
 

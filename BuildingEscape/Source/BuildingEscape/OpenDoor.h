@@ -1,11 +1,12 @@
 // Copyright Nicholas Panayis 2018
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerVolume.h"
 #include "OpenDoor.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -28,12 +29,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnOpenRequest OnOpenRequest;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float OpenAngle = -90.0f;
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;
+	ATriggerVolume* PressurePlate = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	float DoorCloseDelay = 1.0f;
@@ -41,7 +45,7 @@ private:
 	float LastDoorOpenTime;
 	float ClosedAngle;
 	
-	AActor* Owner; // the owning Door
+	AActor* Owner = nullptr; // the owning Door
 
 	// returns total mass in kg
 	float GetTotalMassOfActorsOnPlate() const;
