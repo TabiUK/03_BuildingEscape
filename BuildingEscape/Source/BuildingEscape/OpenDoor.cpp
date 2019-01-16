@@ -22,35 +22,19 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	LastDoorOpenTime = 0.0;
+
 	Owner = GetOwner();
 	if (Owner == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Owner found"));
 		return;
 	}
-	ClosedAngle = Owner->GetActorRotation().Yaw;
 
 	if (PressurePlate == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No PressurePlate on object %s"), *Owner->GetName());
 	}
 	
-}
-
-void UOpenDoor::OpenDoor()
-{
-	if (Owner == nullptr) return;
-
-	/// Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	OnOpenRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	if (Owner == nullptr) return;
-
-	Owner->SetActorRotation(FRotator(0.0f, ClosedAngle, 0.0f));
 }
 
 
@@ -61,16 +45,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	// Poll the Trigger Volume every frame
    // If the ActorThatOpens is in the volume 
-	if (GetTotalMassOfActorsOnPlate() > 30.0f) // TODO
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass) // TODO
 	{
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-	}
-
-	// check if its time to close the door
-	if (LastDoorOpenTime > 0.0 && (GetWorld()->GetTimeSeconds() - LastDoorOpenTime) > DoorCloseDelay)
-	{
-		CloseDoor();
+		// OpenDoor using BluePrint
+		OnOpen.Broadcast();
+	} else {
+		// CloseDoor Using BluePrint
+		OnClose.Broadcast();
 	}
 }
 
